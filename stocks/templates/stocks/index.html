@@ -1,0 +1,13 @@
+<html>
+
+
+<h1>S&P 500 Companies</h1>
+
+{% for company in companies %}
+<a href="{% url 'graph' company.symbol %}">
+name  {{company.name}}, symbol: {{ company.symbol }}<br/>
+{% endfor %}
+{% for one in serializer%}
+{{one}}
+{%endfor %}
+</html>
