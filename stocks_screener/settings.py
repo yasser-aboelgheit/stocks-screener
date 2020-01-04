@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+
 
     # 3rd party
     'alpha_vantage',
@@ -127,3 +129,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 ALPHAVANTAGE_API_KEY = '1XN9VVEV37R8LN4G'
+SITE_ID = 1
+
+
+REST_FRAMEWORK = {
+     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+        'PAGE_SIZE': 50,
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
+}
