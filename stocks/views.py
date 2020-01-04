@@ -1,27 +1,23 @@
 import requests
 import datetime
 import bs4 as bs
+import matplotlib.pyplot as plt
 from django.shortcuts import render
 from .models import Company
 from django.conf import settings
-import matplotlib.pyplot as plt
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from alpha_vantage.timeseries import TimeSeries
 from django.http import HttpResponse
 
 alpha_vantage_key = settings.ALPHAVANTAGE_API_KEY
 
-class HomeView(TemplateView):
+class HomeView(ListView):
     template_name = 'stocks/index.html'
   
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        tickers = []
+    def get_queryset(self):
         companies=Company.objects.filter(created_at=datetime.date.today())
         #if updated list of companies are already in the DB, there is no need to rescraping the website
-        if companies:
-            ctx["companies"] = Company.objects.all()
-        else:
+        if not companies:
             # Either the 500 companies are not updated or the table is empty
             Company.objects.all().delete()
             #scraping this website updated regularly to get a list of 500 companies
@@ -32,9 +28,9 @@ class HomeView(TemplateView):
                 company_symbol = row.findAll('td')[2].text
                 company_name = row.findAll('td')[1].text
                 Company.objects.create(symbol =company_symbol, name =company_name)
-                ctx["companies"] = Company.objects.all()
-        return ctx
-
+        queryset = Company.objects.all()
+        return queryset
+  
 
 def GraphView(request,slug):
     ti = TimeSeries(key=alpha_vantage_key, output_format='pandas')
